@@ -21,6 +21,8 @@ resource "aws_s3_bucket_object" "upload_html" {
 
   etag = filemd5("assets/index.html")
 
+  content_type = "text/html"
+
 }
 
 resource "aws_s3_bucket_object" "upload_js" {
@@ -34,6 +36,8 @@ resource "aws_s3_bucket_object" "upload_js" {
   source = "assets/index.js"
 
   etag = filemd5("assets/index.js")
+
+  content_type = "text/javascript"
 
 }
 
@@ -49,12 +53,14 @@ resource "aws_s3_bucket_object" "upload_css" {
 
   etag = filemd5("assets/style.css")
 
+  content_type = "text/css"
+
 }
 
 resource "aws_cloudfront_distribution" "Nebula_Cloudfront" {
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD", ]
-    cached_methods   = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
     compress               = true
     target_origin_id       = "NebulaOrigin"
     viewer_protocol_policy = "allow-all"
@@ -73,21 +79,21 @@ resource "aws_cloudfront_distribution" "Nebula_Cloudfront" {
 
   origin {
     domain_name = aws_s3_bucket.NebulaBucket.website_endpoint
-    origin_id          = "NebulaOrigin"
+    origin_id   = "NebulaOrigin"
     custom_origin_config {
-      
+
       http_port              = 80
       https_port             = 443
       origin_protocol_policy = "http-only"
-      origin_ssl_protocols = ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
-   
+      origin_ssl_protocols   = ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
+
     }
   }
 
   viewer_certificate {
     cloudfront_default_certificate = true
   }
-  
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
